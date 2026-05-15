@@ -5,6 +5,7 @@ import re
 import requests
 
 app = FastAPI()
+handler=app
 
 @app.get("/")
 def basic_info():
