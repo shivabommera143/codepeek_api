@@ -9,7 +9,22 @@ handler=app
 
 @app.get("/")
 def basic_info():
-    return "This is wrapper API for few coding profile APIs. Leetcode Github GFG Codechef CodeForces"
+    return {
+        "name": "CodePeek API",
+        "description": "A unified REST API to fetch coding profiles from multiple competitive programming platforms",
+        "version": "1.0.0",
+        "platforms": ["LeetCode", "GitHub", "GeeksforGeeks", "CodeChef", "Codeforces", "HackerRank"],
+        "endpoints": {
+            "github": "/github/{handle}",
+            "leetcode": "/leetcode/{handle}",
+            "codeforces": "/codeforces/{handle}",
+            "codechef": "/codechef/{handle}",
+            "gfg": "/gfg/{handle}",
+            "hackerrank": "/hackerrank/{handle}"
+        },
+        "docs": "/docs",
+        "source": "https://github.com/shivabommera143/codepeek-api"
+    }
 
 
 @app.get("/github/{g_handle}")
