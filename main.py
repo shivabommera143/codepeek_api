@@ -81,9 +81,17 @@ def get_leetcode(lc_handle: str):
 
 @app.get("/codeforces/{cf_handle}")
 def get_codeforces(cf_handle: str):
-    data = requests.get(f"https://codeforces.com/api/user.info?handles={cf_handle}")
-    response = data.json()
-    user = response["result"][0]
+    data1 = requests.get(f"https://codeforces.com/api/user.info?handles={cf_handle}")
+    user = data1.json()["result"][0]
+
+    data2 = requests.get(f"https://codeforces.com/api/user.status?handle={cf_handle}&from=1&count=10000")
+    submissions = data2.json().get("result", [])
+    solved = set()
+    for sub in submissions:
+        if sub["verdict"] == "OK":
+            problem_id = str(sub["problem"].get("contestId", "")) + sub["problem"]["index"]
+            solved.add(problem_id)
+            
     return {
         "Handle": user["handle"],
         "First Name": user.get("firstName", None),
@@ -93,6 +101,7 @@ def get_codeforces(cf_handle: str):
         "Rank": user.get("rank", "Unrated"),
         "Max Rating": user.get("maxRating", "Unrated"),
         "Max Rank": user.get("maxRank", "Unrated"),
+        "Problems Solved": len(solved),
     }
 
 @app.get("/codechef/{cc_handle}")
