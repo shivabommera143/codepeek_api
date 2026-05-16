@@ -228,6 +228,18 @@ def get_hackerrank(hr_handle: str):
             return {"error": f"HackerRank user '{hr_handle}' not found"}
 
         user = response.get("model", {})
+
+        # Fetch scores per track
+        data2 = requests.get(f"https://www.hackerrank.com/rest/hackers/{hr_handle}/scores_elo", headers=headers, timeout=20)
+        tracks = data2.json() if data2.status_code == 200 else []
+
+        total_score = sum(track.get("practice", {}).get("score", 0) for track in tracks)
+        track_scores = {
+        track["name"]: track["practice"]["score"]
+        for track in tracks
+            if track.get("practice", {}).get("score", 0) > 0
+        }       
+
         return {
             "ID": user.get("id"),
             "Username": user.get("username"),
@@ -243,6 +255,8 @@ def get_hackerrank(hr_handle: str):
             "Level": user.get("level"),
             "Website": user.get("website"),
             "Short Bio": user.get("short_bio"),
+            "Total Score": total_score,
+            "Track Scores": track_scores,
         }
     except Exception as e:
         return {"error": "Something went wrong", "details": str(e)}
